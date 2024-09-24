@@ -59,6 +59,12 @@
   }
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 @layer base {
   * {
     @apply border-border;

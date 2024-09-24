@@ -14,12 +14,19 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex">
-      <Sidebar />
-      <main className="w-full flex-1 overflow-hidden">
-        <Header />
-        {children}
-      </main>
-    </div>
+    <html lang="en" className="">
+      <body
+        className={`h-screen w-screen overflow-hidden`}
+        suppressHydrationWarning={true}
+      >
+        <div className="flex">
+          <Sidebar />
+          <main className="w-full flex-1 overflow-hidden">
+            <Header />
+            {children}
+          </main>
+        </div>
+      </body>
+    </html>
   );
 }
