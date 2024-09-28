@@ -1,13 +1,22 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import 'easymde/dist/easymde.min.css';
+import { Options } from 'easymde';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
   ssr: false
 });
 
-const CustomMarkdownEditor = ({ value, onChange }: any) => {
-  const editorOptions = {
+interface CustomMarkdownEditorProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+const CustomMarkdownEditor: React.FC<CustomMarkdownEditorProps> = ({
+  value,
+  onChange
+}) => {
+  const editorOptions: Options = {
     autofocus: false,
     spellChecker: false,
     placeholder: 'Enter your Markdown here...',
@@ -25,7 +34,7 @@ const CustomMarkdownEditor = ({ value, onChange }: any) => {
       'image',
       '|',
       'preview'
-    ]
+    ] as Options['toolbar']
   };
 
   return (

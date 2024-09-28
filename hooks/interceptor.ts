@@ -30,7 +30,7 @@ const createApiClient = (): AxiosInstance => {
         // Handle specific error codes here
         switch (error.response.status) {
           case 401:
-            // Handle unauthorized
+            window.location.href = '/';
             break;
           case 403:
             // Handle forbidden

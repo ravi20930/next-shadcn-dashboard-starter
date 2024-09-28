@@ -1,9 +1,8 @@
 import React from 'react';
-import MadeForYouPage from '@/components/madeForYou';
 import { NextPage } from 'next';
 
 const QuickPostPage: NextPage = () => {
-  return <MadeForYouPage />;
+  return <></>;
 };
 
 export default QuickPostPage;

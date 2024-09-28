@@ -9,6 +9,7 @@ export const apiRoutes = {
   saveToUserLibrary: '/user/lib-create',
   sparkPost: '/user/spark-post',
   createPost: '/user/lib-create',
+  getUserRecentPosts: '/user/lib?isPosted=1',
   updateLibraryPost: '/user/lib-update',
   connectLinkedIn: '/user/lin/connect',
   tailoredPosts: '/user/tailored-post',

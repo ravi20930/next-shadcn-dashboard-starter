@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,17 +40,31 @@ const CreateLinkedInPost: React.FC = () => {
   const [selectedTopic, setSelectedTopic] = useState('');
   const [generatedPost, setGeneratedPost] = useState('');
   const [editableSelectedIdea, setEditableSelectedIdea] = useState('');
+  const [userPrompt, setUserPrompt] = useState('');
   const router = useRouter();
   const showToast = useToastMessage();
+  const [isLoaded, setIsLoaded] = useState(false);
   const [selectedFeel, setSelectedFeel] = useState<string>('');
   const feels = [
-    'Professional',
-    'Casual',
-    'Humorous',
-    'Inspirational',
-    'Informative',
-    'Curious'
+    'humorous',
+    'formal',
+    'emoji',
+    'serious',
+    'curious',
+    'friendly'
   ];
+
+  useEffect(() => {
+    setIsLoaded(true);
+  });
+  const [selectedSize, setSelectedSize] = useState<string>('');
+  const sizes = ['small', 'medium', 'large', 'humongous'];
+  const sizeDescriptions = {
+    small: 'A concise post with around 50-100 words.',
+    medium: 'A balanced post with approximately 100-200 words.',
+    large: 'A detailed post containing 200-400 words.',
+    humongous: 'An in-depth post with over 400 words.'
+  };
 
   const getTopicsMutation = useGetTopics();
   const getContentMutation = useGetContent();
@@ -63,11 +77,14 @@ const CreateLinkedInPost: React.FC = () => {
 
     if (valid) {
       try {
+        console.log('we are trying');
         const response = await getTopicsMutation.mutateAsync({
           field: topic,
           count
         });
-        setTopics(response.data.data);
+        console.log('response', response);
+        //@ts-ignore
+        setTopics(response.data.data!);
       } catch (error) {
         console.error('Error fetching topics:', error);
         setTopics([]);
@@ -84,6 +101,7 @@ const CreateLinkedInPost: React.FC = () => {
       const response = await getContentMutation.mutateAsync({
         topic: selectedTopic
       });
+      //@ts-ignore
       setGeneratedPost(response.data.data);
     } catch (error) {
       console.error('Error generating post:', error);
@@ -115,12 +133,14 @@ const CreateLinkedInPost: React.FC = () => {
       const response = await regeneratePostMutation.mutateAsync({
         feel: selectedFeel,
         content: generatedPost,
-        userPrompt: `Initial topic: ${editableSelectedIdea}. Add a CTA: Connect with me @ravi20930`,
+        userPrompt: userPrompt,
+        size: 'medium',
         additionalParams: {
           initialUserInput: topic,
           aiGeneratedtopic: selectedTopic
         }
       });
+      //@ts-ignore
       setGeneratedPost(response.data.data);
     } catch (error) {
       console.error('Error regenerating post:', error);
@@ -130,9 +150,24 @@ const CreateLinkedInPost: React.FC = () => {
 
   const handleProceed = () => {
     router.push(
-      `/dashboard/CreateLinkedInPost?post=${encodeURIComponent(generatedPost)}`
+      `/dashboard/create-post?post=${encodeURIComponent(generatedPost)}`
     );
   };
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  if (!isLoaded) {
+    return null;
+  }
 
   return (
     <PageContainer scrollable={true}>
@@ -193,64 +228,111 @@ const CreateLinkedInPost: React.FC = () => {
                     ))}
                   </div>
                 </ScrollArea>
-                <div className="mb-4">
-                  <h3 className="mb-2 text-lg font-semibold">
-                    Select Post Feel
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {feels.map((feel) => (
-                      <Badge
-                        key={feel}
-                        variant={selectedFeel === feel ? 'default' : 'outline'}
-                        className={`cursor-pointer ${
-                          selectedFeel !== feel ? 'opacity-50' : ''
-                        }`}
-                        onClick={() => setSelectedFeel(feel)}
-                      >
-                        {feel}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                <Button
-                  onClick={handleRegeneratePost}
-                  disabled={regeneratePostMutation.isLoading}
-                  className="w-full"
-                >
-                  {regeneratePostMutation.isLoading ? (
-                    <Loader className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <RefreshCw className="mr-2 h-4 w-4" />
-                  )}
-                  Regenerate Post
-                </Button>
-                <Button className="mt-4 w-full" onClick={handleProceed}>
-                  Proceed
-                </Button>
               </CardContent>
             </Card>
           </div>
 
           <Card className="flex basis-2/3 flex-col">
             <CardHeader>
-              <CardTitle>Generated Post</CardTitle>
-              <CardDescription>
-                Preview and edit your LinkedIn post
-              </CardDescription>
+              <div className="flex w-full flex-row justify-between">
+                <div className="min-w-[300px]">
+                  <CardTitle>Generated Post</CardTitle>
+                  <CardDescription>
+                    Preview and edit your LinkedIn post
+                  </CardDescription>
+                </div>
+                <div className="flex w-full flex-row items-end justify-end">
+                  <Button
+                    onClick={handleRegeneratePost}
+                    disabled={
+                      regeneratePostMutation.isLoading ||
+                      selectedTopic === '' ||
+                      topic === ''
+                    }
+                    variant={'secondary'}
+                    className="ml-auto w-fit"
+                  >
+                    {regeneratePostMutation.isLoading ? (
+                      <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                    )}
+                    Regenerate Post
+                  </Button>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-y-4">
                 {editableSelectedIdea !== '' && (
                   <div className="flex flex-col gap-y-3">
-                    <Label>Selected Idea</Label>
-                    <Input
-                      value={editableSelectedIdea}
-                      onChange={(e) => setEditableSelectedIdea(e.target.value)}
-                      className="w-full"
-                      title="Selected Idea of prompt"
-                    />
+                    <div className="flex flex-col gap-y-3">
+                      <Label>Selected Idea</Label>
+                      <Input
+                        value={editableSelectedIdea}
+                        onChange={(e) =>
+                          setEditableSelectedIdea(e.target.value)
+                        }
+                        className="w-full"
+                        title="Selected Idea of prompt"
+                      />
+                    </div>
                   </div>
                 )}
+                <div className="flex w-full flex-col gap-y-4">
+                  <div className="flex w-full flex-row gap-x-4">
+                    <Card className="flex flex-1 flex-col gap-y-3 rounded-md px-4 py-3 ">
+                      <Label>Select a feel</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {feels.map((feel) => (
+                          <Badge
+                            key={feel}
+                            variant={
+                              selectedFeel === feel ? 'default' : 'outline'
+                            }
+                            className={`cursor-pointer px-3 py-1 text-sm ${
+                              selectedFeel !== feel ? 'opacity-50' : ''
+                            }`}
+                            onClick={() => setSelectedFeel(feel)}
+                          >
+                            {feel}
+                          </Badge>
+                        ))}
+                      </div>
+                    </Card>
+                    <Card className=" flex flex-1 flex-col gap-y-3 rounded-md px-4 py-3">
+                      <Label>Prefered Post Size</Label>
+
+                      <div className="flex flex-wrap gap-2">
+                        {sizes.map((size) => (
+                          <Badge
+                            key={size}
+                            variant={
+                              selectedSize === size ? 'default' : 'outline'
+                            }
+                            className={`cursor-pointer px-3 py-1 text-sm ${
+                              selectedSize !== size ? 'opacity-50' : ''
+                            }`}
+                            onClick={() => setSelectedSize(size)}
+                          >
+                            {size}
+                          </Badge>
+                        ))}
+                      </div>
+                    </Card>
+                  </div>
+
+                  <div className="mt-2 flex flex-col gap-y-3 p-1 pr-16">
+                    <Label>Enter a prompt to enhace the post</Label>
+                    <Input
+                      value={userPrompt}
+                      onChange={(e) => setUserPrompt(e.target.value)}
+                      className="w-full"
+                      placeholder="Enter a prompt to enhace the post"
+                      title="Enter a prompt to enhace the post"
+                    />
+                  </div>
+                </div>
                 <Tabs defaultValue="post" className="w-full space-y-4">
                   <TabsContent value="post" className="h-full w-full grow">
                     <div className="flex w-full flex-col gap-2">
@@ -297,7 +379,7 @@ const CreateLinkedInPost: React.FC = () => {
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Add to library</p>
+                                <p>Open in editor</p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
@@ -310,27 +392,6 @@ const CreateLinkedInPost: React.FC = () => {
                           onChange={(e) => setGeneratedPost(e.target.value)}
                           placeholder="Your LinkedIn post will appear here..."
                         />
-                        <div className="mb-4">
-                          <h3 className="mb-2 text-lg font-semibold">
-                            Select Post Feel
-                          </h3>
-                          <div className="flex flex-wrap gap-2">
-                            {feels.map((feel) => (
-                              <Badge
-                                key={feel}
-                                variant={
-                                  selectedFeel === feel ? 'default' : 'outline'
-                                }
-                                className={`cursor-pointer ${
-                                  selectedFeel !== feel ? 'opacity-50' : ''
-                                }`}
-                                onClick={() => setSelectedFeel(feel)}
-                              >
-                                {feel}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
                       </ScrollArea>
                     </div>
                   </TabsContent>

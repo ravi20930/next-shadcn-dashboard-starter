@@ -9,7 +9,13 @@ export const useConnectLinkedIn = () =>
 
 export const useGetTopics = () => useApiQuery('topics', apiRoutes.getTopics);
 
-export const useGetUser = () => useApiQuery('user', apiRoutes.user);
+interface User {
+  name: string;
+  picture?: string;
+  // Add other user properties as needed
+}
+
+export const useGetUser = () => useApiQuery<User>('user', apiRoutes.user);
 
 export const useGetContentByTopic = (topic: string) =>
   useApiQuery(['content', topic], apiRoutes.getContentByTopic, {

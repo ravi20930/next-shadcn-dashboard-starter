@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DashboardNav } from '@/components/dashboard-nav';
 import { navItems } from '@/constants/data';
 import { cn } from '@/lib/utils';
@@ -14,6 +14,17 @@ type SidebarProps = {
 
 export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   const handleToggle = () => {
     toggle();

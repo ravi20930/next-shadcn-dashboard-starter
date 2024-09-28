@@ -8,33 +8,43 @@ import {
 } from 'react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 import { apiClient } from './interceptor';
-import { queryClient } from '../utils/useQueryClient';
 
-export const useApiQuery = <T>(
+// Define a more flexible data type
+type ApiData = any;
+interface ApiResponse<T> {
+  data?: T;
+  // Add other properties that might be in the response
+}
+
+export const useApiQuery = <TData = unknown>(
   queryKey: QueryKey,
   url: string,
-  options?: UseQueryOptions<T, AxiosError>
+  options?: Omit<
+    UseQueryOptions<ApiResponse<TData>, AxiosError>,
+    'queryKey' | 'queryFn'
+  >
 ) => {
-  return useQuery<T, AxiosError>(
+  return useQuery<ApiResponse<TData>, AxiosError>(
     queryKey,
-    () => apiClient.get(url).then((res) => res.data),
-    {
-      ...options,
-      queryClient // Add this line
-    }
+    async () => {
+      const response = await apiClient.get<ApiResponse<TData>>(url);
+      return response.data;
+    },
+    options
   );
 };
 
-export const useApiMutation = <T, V>(
+export const useApiMutation = <TData = unknown, TVariables = unknown>(
   url: string,
   method: 'post' | 'put' | 'patch' | 'delete' = 'post',
-  options?: UseMutationOptions<AxiosResponse<T>, AxiosError, V>
+  options?: Omit<
+    UseMutationOptions<AxiosResponse<TData>, AxiosError, TVariables>,
+    'mutationFn'
+  >
 ) => {
-  return useMutation<AxiosResponse<T>, AxiosError, V>(
+  return useMutation<AxiosResponse<TData>, AxiosError, TVariables>(
+    //@ts-ignore
     (data) => apiClient[method](url, data),
-    {
-      ...options,
-      queryClient // Add this line
-    }
+    options
   );
 };

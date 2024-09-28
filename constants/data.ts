@@ -118,35 +118,46 @@ export const navItems: NavItem[] = [
     label: 'Quick Post'
   },
   {
+    title: 'Inspirations',
+    href: '/dashboard/inspirations',
+    icon: 'add',
+    label: 'Inspirations'
+  },
+  {
     title: 'Dashboard',
     href: '/dashboard',
     icon: 'dashboard',
-    label: 'Dashboard'
+    label: 'Dashboard',
+    disabled: true
   },
 
   {
     title: 'User',
     href: '/dashboard/user',
     icon: 'user',
-    label: 'user'
+    label: 'user',
+    disabled: true
   },
   {
     title: 'Employee',
     href: '/dashboard/employee',
     icon: 'employee',
-    label: 'employee'
+    label: 'employee',
+    disabled: true
   },
   {
     title: 'Profile',
     href: '/dashboard/profile',
     icon: 'profile',
-    label: 'profile'
+    label: 'profile',
+    disabled: true
   },
   {
     title: 'Kanban',
     href: '/dashboard/kanban',
     icon: 'kanban',
-    label: 'kanban'
+    label: 'kanban',
+    disabled: true
   },
   {
     title: 'Login',

@@ -4,7 +4,7 @@ import { useToast } from '@/components/ui/use-toast';
 export interface ToastMessageProps {
   title: string;
   description?: string;
-  type: 'success' | 'info' | 'warn' | 'destructive' | 'error';
+  type?: 'success' | 'info' | 'warn' | 'destructive' | 'error';
   actionText?: string;
   actionHandler?: () => void;
   options?: any;

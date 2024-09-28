@@ -29,3 +29,15 @@ export const useViralsByCategory = (category: string) =>
 
 export const useInspiration = () =>
   useApiQuery('inspiration', apiRoutes.inspiration);
+
+interface RecentPost {
+  id: string;
+  content: string;
+  createdAt: string;
+  // Add any other fields that are returned by the API
+}
+
+export const useRecentPosts = () =>
+  useApiQuery(['recentPosts'], apiRoutes.getUserRecentPosts, {
+    refetchInterval: 60000 // Refetch every minute
+  });

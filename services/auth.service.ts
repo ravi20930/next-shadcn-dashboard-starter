@@ -1,16 +1,18 @@
-// src/services/authService.ts
-import { useApiQuery, useApiMutation } from '../hooks/useApiQuery';
+import { useApiMutation } from '../hooks/useApiQuery';
 import { apiRoutes } from '@/config/api';
 
-export const useLogin = () =>
-  useApiMutation<{ token: string }, { email: string; password: string }>(
-    apiRoutes.login
-  );
+export const useLogin = () => {
+  return useApiMutation(apiRoutes.login, 'post');
+};
 
-export const useGoogleLogin = () =>
-  useApiMutation<{ token: string }, { code: string }>(apiRoutes.googleLogin);
+export const useGoogleAuth = () => {
+  return useApiMutation(apiRoutes.googleLogin, 'post');
+};
 
-export const useLinkedInLogin = () =>
-  useApiMutation<{ token: string }, { code: string }>(apiRoutes.linkedInLogin);
+export const useLinkedInAuth = () => {
+  return useApiMutation(apiRoutes.linkedInLogin, 'post');
+};
 
-export const useGetUser = () => useApiQuery('user', apiRoutes.user);
+export const useGetUser = () => {
+  return useApiMutation(apiRoutes.user, 'post');
+};
