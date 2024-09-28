@@ -17,10 +17,9 @@ export const useUpdateLibraryPost = () =>
 export const useTailoredPosts = () =>
   useApiQuery('tailoredPosts', apiRoutes.tailoredPosts);
 
-export const useSeedIdeas = () => useApiQuery('seedIdeas', apiRoutes.seedIdeas);
+export const useSeedIdeas = () => useApiMutation(apiRoutes.seedIdeas);
 
-export const useSeedContent = () =>
-  useApiQuery('seedContent', apiRoutes.seedContent);
+export const useSeedContent = () => useApiMutation(apiRoutes.seedContent);
 
 export const useViralsByCategory = (category: string) =>
   useApiQuery(['virals', category], apiRoutes.viralsByCategory(category), {
@@ -29,3 +28,6 @@ export const useViralsByCategory = (category: string) =>
 
 export const useInspiration = () =>
   useApiQuery('inspiration', apiRoutes.inspiration);
+
+export const useUserLibrary = () =>
+  useApiQuery('userLibrary', apiRoutes.fetchuserlibrary);

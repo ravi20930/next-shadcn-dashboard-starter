@@ -118,6 +118,42 @@ export const navItems: NavItem[] = [
     label: 'Quick Post'
   },
   {
+    title: 'Made-for-You',
+    href: '/dashboard/made-for-you',
+    icon: 'add',
+    label: 'Made-for-You'
+  },
+  {
+    title: 'Top-Creators',
+    href: '/dashboard/Top-Creators',
+    icon: 'add',
+    label: 'Top-Creators'
+  },
+  {
+    title: 'CreateLinkdeInPost',
+    href: '/dashboard/CreateLinkdeInPost',
+    icon: 'add',
+    label: 'CreateLinkdeinPost'
+  },
+  {
+    title: 'Inspiration',
+    href: '/dashboard/Inspiration',
+    icon: 'add',
+    label: 'Inspiration'
+  },
+  {
+    title: 'Library',
+    href: '/dashboard/Library',
+    icon: 'add',
+    label: 'Library'
+  },
+  {
+    title: 'Account',
+    href: '/dashboard/Account',
+    icon: 'add',
+    label: 'Account'
+  },
+  {
     title: 'Dashboard',
     href: '/dashboard',
     icon: 'dashboard',
